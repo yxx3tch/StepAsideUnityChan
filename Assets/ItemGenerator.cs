@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class ItemGenerator : MonoBehaviour {
+        //Unityちゃんのオブジェクトを取得
+        private GameObject unitychan;
         //carPrefabを入れる
         public GameObject carPrefab;
         //coinPrefabを入れる
@@ -14,11 +16,14 @@ public class ItemGenerator : MonoBehaviour {
         private int goalPos = 120;
         //アイテムを出すx方向の範囲
         private float posRange = 3.4f;
+        //Unityちゃんの位置
+        private int unitychanPos;
+        //アイテム出現範囲
+        private int span = 45;
 
-        // Use this for initialization
-        void Start () {
-                //一定の距離ごとにアイテムを生成
-                for (int i = startPos; i < goalPos; i+=15) {
+        void itemGenerate(int presentPos){
+                //1span先の1span内にアイテムを生成（ゴールより先には生成しない）
+                for (int i = presentPos + span; i <= Mathf.Min(presentPos + 2*span - 15 ,goalPos); i+=15) {
                         //どのアイテムを出すのかをランダムに設定
                         int num = Random.Range (0, 10);
                         if (num <= 1) {
@@ -50,8 +55,19 @@ public class ItemGenerator : MonoBehaviour {
                 }
         }
 
+        // Use this for initialization
+        void Start () {
+                //Unityちゃんの初期位置設定
+                this.unitychan = GameObject.Find("unitychan");
+                unitychanPos = startPos;
+        }
+
         // Update is called once per frame
         void Update () {
-
+                //1span走るごとにアイテム生成
+                if(Mathf.Abs(unitychan.transform.position.z - unitychanPos) > span){
+                        unitychanPos = (int)unitychan.transform.position.z;
+                        itemGenerate(unitychanPos);               
+                }
         }
 }
